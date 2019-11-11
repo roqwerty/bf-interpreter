@@ -28,3 +28,6 @@ Usage: python3 \<file\>.py \<optional filepath\> \<args\>
 Arguments:
  - -h: Displays the help menu for the program
  - -v: Verbose mode (will print contents of memory after every single command)
+
+# Tutorials
+A list of commands that I've found to be useful is included in the file Turing's Apocryphon, but much like the name suggests, much of programming in BF is difficult or impossible to teach. Mess around, have fun, and do great things.
