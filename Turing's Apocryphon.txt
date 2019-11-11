@@ -1,0 +1,109 @@
+This is a list of commands encoded in Turing
+Valid commands:
+	+ : Increment the value of the current register
+	- : Decrement the value of the current register
+	< : Move left one register
+	> : Move right one register
+	[ : If current register is zero, skip to corresponding closing bracket
+	] : If current register is NOT zero, jump back to corresponding opening bracket
+
+Tags:
+	mem0 : Current memory index
+	mem1 : Memory index one to the right of starting pos
+	(d)  : Destructive action (erases original value(s))
+	(b)	 : Boolean operation (result is 1 for true or 0 for false)
+	X    : Space for other commands
+
+
+ _____________
+|             |
+|   Utility   |
+|_____________|
+
+Command					Desc												Rel. End Pos
+----------------------------------------------------------------------------------------------------
+[->+<]					Moves a number right one memory location			0
+[->>+<<]				Moves a number right two memory locations			0
+[>]						Moves right until 0 is encountered					-
++[->+]-					Moves right until -1 is encountered					-
+++[-->++]--				Moves right until -2 is encountered					-
+++[-->++]				Trace right to first -2 and wipe it (d)				-
+[->+>+<<]				Copies mem0 into mem1 and mem2 (d)					0
+[->+>+<<]>>[-<<+>>]<<	Duplicates mem0 into mem1 (uses mem3)				0
+[-]						Wipes a positive number (d)							0
+[ X -]					For loop (until mem0 is 0)							0
+[ X [-]]				If mem == 0 (does not loop)	(d)						0
+[-]+++					Sets value of current memory to 3 absolutely		0
+>[-<->][-]+<[>-<[-]]	If mem0 == mem1, stores in mem1 (b) (d)				0
+
+ ___________
+|           |
+|   Logic   |
+|___________|
+
+Command								Desc												Rel. End Pos
+----------------------------------------------------------------------------------------------------
+>[-]+<[>-<[-]]						NOT mem0 is stored in mem1 (b) (d)					0
+>>[-]<<[>>[-]+<<[-]]>[>-[-]+<[-]]	OR mem0 or mem1 is stored in mem2 (b) (d)			+1
+>>[-]+<<[>>[-]<<[-]]>[>[-]<[-]]		NOR mem0 neither mem1, stored in mem2 (b) (d)		+1
+>>[-]<<[>[>[-]+<[-]]<[-]]>[-]<		AND mem0 and mem1, stored in mem2 (b) (d)			0
+
+
+ __________
+|          |
+|   Math   |
+|__________|
+
+Command				Desc														Rel. End Pos
+----------------------------------------------------------------------------------------------------
+[->>+<<]>[->+<]		Adds together mem0 and mem1 into mem2 (d)					+1
+[->>+<<]>[->-<]		Subtracts mem1 from mem0 and stores in mem3 (1 - 2 = 3) (d)	+1
+>[-<->]<			Subtracts mem1 from mem0 and stores in mem0 (1 - 2 = 1) (d) 0
+
+ _______________
+|               |
+|   Adv. Math   |
+|_______________|
+
+Multiply mem0 and mem1 into mem2::: (d mem0, keep mem1, uses mem3, ends 0 offset)
+[>[->+>+<<]>>[-<<+>>]<<<-]
+
+	[				For each time of mem0
+		>				Move to mem1
+		[->+>+<<]		Copy mem1 into mem2 and mem3
+		>>				Move to mem3
+		[-<<+>>]		Move mem3 to mem1
+		<<<				Move from mem3 to mem0
+	-]				End of for loop
+
+
+ ______________
+|              |
+|   I/O Work   |
+|______________|
+
+Print 'a'
+++++++++++>++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>---. (d mem0, mem1, uses mem3, ends +2 offset)
+	++++++++++ 					Add ten to reg1
+	>							Move to reg2
+	++++++++++					Add ten to reg2
+	<							Move to reg1
+	[>[->+>+<<]>>[-<<+>>]<<<-]	Multiply reg1 and reg2 into reg3
+	>[-]						Move to reg2 and clear it
+	>---						Move to reg3 and subtract 3
+	.							Print reg3 as ASCII
+
+Converts uppercase input into lowercase
+,++++++++++++++++++++++++++++++++.
+	,		Input into mem0
+	32x+	Add 32
+	.		Output ASCII
+
+
+
+
+
+
+
+
+
