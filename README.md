@@ -18,12 +18,12 @@ In addition to the official BF commands listed above, the interpreter also suppo
  - d  :  Displays the values of all active memory cells and pointer location
 
 # Interpreter Specifics
- - base.py is the main interpreter, giving commands for the first six functions listed above
- - full.py adds I/O support, as well as the additional custom BF commands
-
-Usage: python3 \<file\>.py \<optional filepath\> \<args\>
+>base.py is the main interpreter, giving commands for the first six functions listed above
+>full.py adds I/O support, as well as the additional custom BF commands
 
 If an optional txt file is given as an argument, the interpreter will read and execute the file before switching into interpreter mode.
+
+Usage: python3 \<file\>.py \<optional filepath\> \<args\>
 
 Arguments:
  - -h: Displays the help menu for the program
