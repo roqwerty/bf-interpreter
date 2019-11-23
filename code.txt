@@ -1,0 +1,513 @@
+[
+This is a bunch of Turing arguments
+All code here that is not one of the special characters gets treated as a comment by the interpreter
+By putting all the code in square brackets, all ,.+-<>[] characters are ignored (as first index is 0)
+Brackets must still be balanced, though
+]
+
+
+
+[---STRUCTURE---]
+
+INPUT1 INPUT2 OUTPUT1 SCRATCH/OUTPUT2/COPYBUFFER NEG1MARK STORAGE1 STORAGE2 ....
+
+Float to NEG1MARK:
++[->+]- from left or +[-<+]- from right
+
+Move value from STORAGE1 to INPUT1:
+[-+[-<+]-<<<<++[->+]->]
+
+Copy value from STORAGE1 to INPUT1: (end @ COPYBUFFER)
+[-+[-<+]-<+<<<++[->+]->]+[-<+]-<[-+[->+]->++[-<+]-<]
+                      >                  >                 Important for STORAGE1
+           <<<                                             Important for INPUT1
+Copy value from STORAGE2 to INPUT2: (end @ COPYBUFFER)
+[-+[-<+]-<+<<++[->+]->>]+[-<+]-<[-+[->+]->>++[-<+]-<]
+                     >>                  >>                Important for STORAGE2
+           <<                                              Important for INPUT2
+
+FULL PROGRAM EXAMPLE
+>>>>->													Sets up NEG1MARK and navigates to STORAGE1
++++++>+++++++<											Stores 5 and 7 (STORAGE1 and STORAGE2)
+[-+[-<+]-<+<<<++[->+]->]+[-<+]-<[-+[->+]->++[-<+]-<]	Copies STORAGE1 into INPUT1
++[->+]->>												Navigate to STORAGE2
+[-+[-<+]-<+<<++[->+]->>]+[-<+]-<[-+[->+]->>++[-<+]-<]	Copies STORAGE2 into INPUT2
+<<<														Naviagte to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]							Multiply into OUTPUT1 and nav to INPUT2
+>[-+[->+]->>>++[-<+]-<<]								Move multiplied value to STORAGE3
++[->+]->>>												Navigate to STORAGE3
+.														Print ASCII value to screen (#)
+
+
+
+
+
+
+
+[Boolean flag test]
+ONE TWO OUTPUT BUFFER NEG1 STORAGE
+>>>>-<<+							Set up Neg1 and make bool TRUE (@ output location)
+>>>+++++++<<<						Set STORAGE to 7 (if boolean is false)
+[+[->+]->[-]++++++[-<+]-<<[-]]		If boolean was 1 (or anything else), overwrite STORAGE to 5
+
+>>>>-<<+>>>+++++++<<<[+[->+]->[-]++++++[-<+]-<<[-]]		TRUE (is 5)
+>>>>->+++++++<<<[+[->+]->[-]++++++[-<+]-<<[-]]			FALSE (is 7) (also can change if set)
+
+
+
+
+[Check to see if two inputted numbers are equal]
+ONE TWO OUTPUT BUFFER NEG1 STORAGE1 STORAGE2
+>>>>->,>,<							NEG1 setup and Get two inputs in STORAGE1 and STORAGE2
+[-<<<<<+>>>>>]						Move STORAGE1 to INPUT1
+>[-<<<<<+>>>>>]						Move STORAGE2 to INPUT2
+<<<<<<								Move to INPUT1
+>[-<->][-]+<[>-<[-]]				If 1 == 2, store in 2
+>[->+<]>							Move output to OUTPUT
+>>>[-]++++++++++<<<					Set STORAGE1 to 10 (if not equal) and return
+[>>>[-]+++++<<<[-]]					If boolean was false, reset to 5
+
+>>>>->,>,<[-<<<<<+>>>>>]>[-<<<<<+>>>>>]<<<<<<>[-<->][-]+<[>-<[-]]>[->+<]>>>>[-]++++++++++<<<[>>>[-]+++++<<<[-]]
+
+
+[Flag test (destructive)]
+FLAG1 FLAG2 NEG1 STORAGE
+>>-<<				NEG1 setup
++><					INITIAL FLAG CONFIG (1, 0)
+[>>>+++++<<<[-]]	If FLAG1, add 5 to STORAGE
+>[>>+++<<[-]]		If FLAG2, add 3 to STORAGE
+
+>>-<< +>+< [>>>+++++<<<[-]]>[>>+++<<[-]]
+
+
+
+
+
+
+[SWITCH STATEMENT WORKS]
+ONE TWO OUTPUT BUFFER NEG1 STORAGE1 STORAGE1
+STORAGE1 is location integer
+
+>>>>->+		Set up NEG1 and store 1 in STORAGE1
+
+[-<<+<<<+>>>>>]<<[->>+<<]		Copy STORAGE1 into INPUT1
+<[-]<<							Set OUTPUT to 0 (boolean flag false)
+[-								For i in range ONE (starts at one next loop is == 2 etc) (Split into multiple statements)
+	[->+>>+<<<]>>>[-<<<+>>>]		Copy ONE into TWO
+	<+<								Set flag to 1 (true)
+	[>[-]<[-]]						If the current location (copied into TWO) is not 0 (not correct) set flag to 0 false
+	>[ X <[-]>[-]]<<					If the flag is not 0 do something and set both ONE and TWO to 0 (Start and end at OUTPUT)
+]								End of ONE for loop
+[-]>>[-]+[->+]-			Set ONE and OUTPUT to 0 and move to NEG1
+
+>>>>->+[-<<+<<<+>>>>>]<<[->>+<<]<[-]<<
+-	Loop one 1
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[ X <[-]>[-]]<<
+-	Loop one 2
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[ X <[-]>[-]]<<
+[-]>>[-]+[->+]-		FINISH
+
+Loop with printing
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[>> X <<<[-]>[-]]<<
+
+
+
+
+>>>>->++[-<<+<<<+>>>>>]<<[->>+<<]<[-]<<-[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[>>>>+<<<<<[-]>[-]]<<-[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[>>>>++<<<<<[-]>[-]]<<[-]>>[-]+[->+]-
+
+
+
+
+
+[BOUNDS CHECKING] Start at INPUT1 with INPUT1 with number to check INPUT2 is range (1 through n) ONE less than or equal to TWO
+ONE TWO OUTPUT BUFFER NEG1
+>>>[-]<<					Set output and buffer to 0
+					Sub one from TWO for strictly less than (is the or equal to) (Want ONE to go to zero before two)
+[-						For in range TWO
+	>[-]<				Set boolean false
+	<-					Subtract one from ONE
+	[>>[-]+>]				If one is not zero set boolean true and move to BUFFER
+	+[->+]-<<			Return absolutely to OUTPUT
+	-[<[-]>[+]+>]+[->+]-<<+			If OUTPUT is false (ONE went to zero) reset TWO such that boolean becomes double true ([+] just to make reset faster (starts at 255))
+	<					Return to TWO
+]
+>-<					Make boolean double -> true and true -> false
+<[-]				Cleanup ONE
+
+++>+++++>>>-<<<<			Setup
+>>>[-]<<[->[-]<<-[>>[-]+>]+[->+]-<<-[<[-]>[+]+>]+[->+]-<<+<]>-<<[-]		Execution
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Location testing] [BROKEN]
+ONE TWO OUTPUT BUFFER NEG1 STORAGE1 STORAGE2
+
+[-<<+<<<+>>>>>]<<[->>+<<]		Copy STORAGE1 into INPUT1
+<<+<							Set TWO to one
+>[-<->][-]+<[>-<[-]]>			Check to see if they are equal (and store in TWO)
+-[ X ][-]						If true do X(STORAGE is equal to hardcoded value) (Start @ TWO finish by wiping TWO or at zero value)
+
+Tests whether storage is one or two and prints results (Start @ storage)
+[-<<+<<<+>>>>>]<<[->>+<<]		Copy STORAGE1 into INPUT1
+<<+<							Set TWO to one
+>[-<->][-]+<[>-<[-]]>			Check to see if they are equal (and store in TWO)
+-[[-]+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.+.-----.+++.-----------------.++++++.--.-------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.++++++++++.-----------------------------------------------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.-.---------.--------------------------------------------------------------------.-----------------------.[-] Print that it's one
+]							If NOT true do X(STORAGE is equal to hardcoded value) (Start @ TWO finish by wiping TWO or at zero value)
+>>>>							 MOVE BACK TO STORAGE1
+[-<<+<<<+>>>>>]<<[->>+<<]		Copy STORAGE1 into INPUT1
+<<++<							Set TWO to two
+>[-<->][-]+<[>-<[-]]>			Check to see if they are equal (and store in TWO)
+-[[-]+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.++++++++++++++++++++++++++++++++++.+++++++++++++++++.+.--------------------.+++++++++++..+++++++++++++.-----------------------------------------------------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++.+.-----.+++.-----------------.++++++.--.-------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.++++++++++.-----------------------------------------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.+++.--------.------------------------------------------------------------------------------.-----------------------.[-] Print is 2
+]							If true do X(STORAGE is equal to hardcoded value) (Start @ TWO finish by wiping TWO or at zero value)
+
+
+[INPUT ASCII NUMBER CHECKING (IS THE OPPOSITE!!! [] = != !!!)]
+An 0-9 ASCII input is the actual value + 48
+
+,														Get input into the current register
+------------------------------------------------		Subtract 48 from the given number
+[ X	]													<Code to exec if number is 0>
++[ X ]													<Code to exec if number is 1>
++[ X ]													<Code to exec if number is 2>
++[ X ]													<Code to exec if number is 3>
++[ X ]													<Code to exec if number is 4>
++[ X ]													<Code to exec if number is 5>
++[ X ]													<Code to exec if number is 6>
++[ X ]													<Code to exec if number is 7>
++[ X ]													<Code to exec if number is 8>
++[ X ]													<Code to exec if number is 9>
+[-]														Kill the value (regardless of input)
+
+EXAMPLE: Store input as number in register to right BROKEN!!!
+,------------------------------------------------		Get input and reduce
+[]														If 0, nothing
++[>+<]													If 1, store 1
++[>++<]													If 2, store 2
++[>+++<]+[>++++<]+[>+++++<]+[>++++++<]+[>+++++++<]		etc., through 7
++[>++++++++<]+[>+++++++++<]								Through 9
+[-]														Kill value
+
+REAL:
+,------------------------------------------------		Get input and reduce
+[>+<-]													Move the input
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[FLOOR DIVISION]
+INPUT1 INPUT2 WHOLE SCRATCH
+
+Decrement INPUT1 and Increment Remainder until remainder is INPUT2 then increment Whole and remainder = 0, all done until input1=0
+Can make Remainder = -Input2 each time and check when it == 0
+---OR---
+remainder =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[---FUNCTIONAL---]
+
+[Equality Test]
+[
+
+ONE TWO/INDICATOR (Two becomes the indicator, 1 if true and 0 if false)
+
+while two != 0 {
+	two - 1
+	one - 1 		Subtracts two from one and stores it in one
+}
+indicator = 1
+while one != 0 {	Numbers were not equal
+	indicator = -1
+	one = 0	
+}
+
+Start @ one
+>[-<->][-]+<[>-<[-]]
+
+>[-<->]		1st loop
+[-]+		indicator = 1
+<[>-<[-]]	2nd loop
+
+
+]
+
+
+
+[NEGATOR] / [LOGICAL NOT]
+VALUE INDICATOR (1 for true (is == 0) and 0 for false (!= 0))
+
+indicator = 1			Assume is == 0
+while value != 0 {		If proven wrong
+	indicator - 1		Guess I'm wrong
+	value = 0			Break the loop
+}
+
+>[-]+<[>-<[-]]
+
+
+
+[LOGICAL OR]
+ONE TWO INDICATOR (boolean)
+
+indicator = 0			Assume are both False
+while one != 0 {		If one is true, indicator becomes 1
+	indicator = 1
+	one = 0
+}
+while two != 0 {
+	while indicator - 1 != 0 {		If already marked as true, don't overdo it
+		indicator = 1
+	}
+	two = 0
+}
+
+>>[-]<<[>>[-]+<<[-]]>[>-[-]+<[-]]
+
+
+
+
+[LOGICAL AND]
+ONE TWO INDICATOR (boolean)
+
+indicator = 0		Assume false
+while one != 0 {
+	while two != 0 {
+		indicator = 1
+		two = 0
+	}
+	one = 0
+}
+two = 0				Kinda redundancy, but does apply when NOT one
+
+>>[-]<<[>[>[-]+<[-]]<[-]]>[-]<
+
+
+
+
+[LOGICAL NOR]
+ONE TWO INDICATOR (boolean)
+
+indicator = 1		Assume neither one is true
+while one != 0 {	If one is true
+	indicator = 0	Statement is false
+	one = 0
+}
+while two != 0	{	If two is true
+	indicator = 0	Statement is false
+	two = 0
+}
+
+>>[-]+<<[>>[-]<<[-]]>[>[-]<[-]]
+
+
+
+
+
+
+
+[Greater than zero]
+ONE INDICATOR (boolean)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[GREATER THAN, not equal to]
+ONE TWO INDICATOR (boolean)
+
+indicator = 1		Assume true
+while two != 0 {
+	two - 1
+	one - 1
+	while one != 0 {	BROKEN here, does things as long as != 0
+		indicator - 1
+		one = 0
+		two = 0
+	}
+}
+one = 0
+
+[BROKEN TOO]
+indicator = 1		Assume true
+while two != 0 {
+	two - 1			Two goes to 0
+	one - 1			If one is positive, it was greater (true)
+}
+while two != 0 {	Copy the number over, and if it goes through zero kill it (false)
+	one - 1
+	two + 1
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[---BROKEN---]
+
+[Comparison Test] [BROKEN]
+
+[
+FLAG:
+	positive: one's bigger
+	negative: two's bigger
+	can be biased at beginning (starts at 5, is two more than 5 bigger than one or not (or exactly))
+INDICATOR:
+	0: numbers are equal
+	1: one's bigger
+	2: two's bigger
+]
+
+[
+
+ONE TWO INDICATOR FLAG
+
+one != 0 {
+	one - 1
+	flag + 1
+}
+two != 0 {
+	two - 1
+	flag - 1
+	flag + 1 != 0 {
+		flag + 1				Flag will not go below -1, but could be above 1
+	}
+}
+indicator = 0					Indicator will be at 0 (equal), unless proven otherwise
+flag != 0 {						If the numbers are not equal
+	indicator + 2				Assume two is bigger
+	flag + 1 != 0 {				If one was bigger (flag != -1)
+		indicator - 1			Assert that one was bigger
+	}
+	flag = 0					Break the loop (only want comparison)
+}
+
+]
+
+CODE
+FUTURE FLAG CAN LITERALLY BE ONE
+ONE TWO INDICATOR FLAG
+
+[->>>+<<<]>[->>+[--+]-<<]>[-]>[<++>+[-<->+]-[-]]<
+
+[					One is not 0
+	->>>+<<<			Flag gets incremented, One decrements
+]					END One is not 0
+
+>					Goto Two
+[					Two is not 0
+	-					Two gets decremented
+	>>					Goto Flag
+	+[-					Flag + 1 is not 0				DECREMENTS UNTIL FLAG = 255
+		-					Flag decremented
+	+]-					END Flag + 1 is not 0
+	<<					Goto Two
+]					END Two is not 0
+
+>					Goto Indicator
+[-]					Indicator is now 0
+> 					Goto Flag
+
+[					Flag is not 0
+	<++>				Increment indicator to 2
+	+[-					Flag + 1 is not 0
+		<->					Decrement Indicator
+	+]-					END Flag + 1 is not 0
+	[-]					Flag = 0
+]					END Flag is not 0
+<					Move to Indicator
+
+
+
+
+
+
+

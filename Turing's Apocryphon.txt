@@ -15,6 +15,57 @@ Tags:
 	X    : Space for other commands
 
 
+
+[---STRUCTURE---]
+
+INPUT1 INPUT2 OUTPUT1 SCRATCH/OUTPUT2/COPYBUFFER NEG1MARK STORAGE1 STORAGE2 ....
+
+Float to NEG1MARK:
++[->+]- from left or +[-<+]- from right
+
+Move value from STORAGE1 to INPUT1:
+[-+[-<+]-<<<<++[->+]->]
+
+Copy value from STORAGE1 to INPUT1: (end @ COPYBUFFER)
+[-+[-<+]-<+<<<++[->+]->]+[-<+]-<[-+[->+]->++[-<+]-<]
+                      >                  >                 Important for STORAGE1
+           <<<                                             Important for INPUT1
+Copy value from STORAGE2 to INPUT2: (end @ COPYBUFFER)
+[-+[-<+]-<+<<++[->+]->>]+[-<+]-<[-+[->+]->>++[-<+]-<]
+                     >>                  >>                Important for STORAGE2
+           <<                                              Important for INPUT2
+
+
+[SWITCH STATEMENT THAT WORKS]
+ONE TWO OUTPUT BUFFER NEG1 STORAGE1 STORAGE1
+STORAGE1 is location integer
+
+>>>>->+		Set up NEG1 and store 1 in STORAGE1
+
+[-<<+<<<+>>>>>]<<[->>+<<]		Copy STORAGE1 into INPUT1
+<[-]<<							Set OUTPUT to 0 (boolean flag false)
+[-								For i in range ONE (starts at one next loop is == 2 etc) (Split into multiple statements)
+	[->+>>+<<<]>>>[-<<<+>>>]		Copy ONE into TWO
+	<+<								Set flag to 1 (true)
+	[>[-]<[-]]						If the current location (copied into TWO) is not 0 (not correct) set flag to 0 false
+	>[ X <[-]>[-]]<<					If the flag is not 0 do something and set both ONE and TWO to 0 (Start and end at OUTPUT)
+]								End of ONE for loop
+[-]>>[-]+[->+]-			Set ONE and OUTPUT to 0 and move to NEG1
+
+>>>>->+[-<<+<<<+>>>>>]<<[->>+<<]<[-]<<
+-	Loop one 1
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[ X <[-]>[-]]<<
+-	Loop one 2
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[ X <[-]>[-]]<<
+[-]>>[-]+[->+]-		FINISH
+
+Loop with printing (conditional starts and ends at NEG1)
+[->+>>+<<<]>>>[-<<<+>>>]<+<[>[-]<[-]]>[>> X <<<[-]>[-]]<<
+
+
+
+
+
  _____________
 |             |
 |   Utility   |
@@ -32,9 +83,14 @@ Command					Desc												Rel. End Pos
 [->+>+<<]>>[-<<+>>]<<	Duplicates mem0 into mem1 (uses mem3)				0
 [-]						Wipes a positive number (d)							0
 [ X -]					For loop (until mem0 is 0)							0
-[ X [-]]				If mem == 0 (does not loop)	(d)						0
+[ X [-]]				If mem != 0 (does not loop)	(d)						0
 [-]+++					Sets value of current memory to 3 absolutely		0
 >[-<->][-]+<[>-<[-]]	If mem0 == mem1, stores in mem1 (b) (d)				0
+
+
+Command								Desc																		Rel. End Pos
+-----------------------------------------------------------------------------------------------------------------------------------
+[-+[-<+]-<<+++[-->++]--<]			Moves a value located one to the left of -2 to 2 to the left of -1			-
 
  ___________
 |           |
@@ -47,6 +103,12 @@ Command								Desc												Rel. End Pos
 >>[-]<<[>>[-]+<<[-]]>[>-[-]+<[-]]	OR mem0 or mem1 is stored in mem2 (b) (d)			+1
 >>[-]+<<[>>[-]<<[-]]>[>[-]<[-]]		NOR mem0 neither mem1, stored in mem2 (b) (d)		+1
 >>[-]<<[>[>[-]+<[-]]<[-]]>[-]<		AND mem0 and mem1, stored in mem2 (b) (d)			0
+-[ X ][-]							IF true (binary 1) (b) (d)							0
+
+Command																			Desc								Rel. End Pos
+================================================================================================================================
+>>>[-]<<[->[-]<<-[>>[-]+>]+[->+]-<<-[<[-]>[+]+>]+[->+]-<<+<]>-<<[-]				Less than or equal to (b) (d)		0
+>>>[-]<<-[->[-]<<-[>>[-]+>]+[->+]-<<-[<[-]>[+]+>]+[->+]-<<+<]>-<<[-]			Less than (b) (d)					0
 
 
  __________
@@ -67,6 +129,7 @@ Command				Desc														Rel. End Pos
 
 Multiply mem0 and mem1 into mem2::: (d mem0, keep mem1, uses mem3, ends 0 offset)
 [>[->+>+<<]>>[-<<+>>]<<<-]
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-] (d mem1, ends 1 offset)
 
 	[				For each time of mem0
 		>				Move to mem1
@@ -81,6 +144,13 @@ Multiply mem0 and mem1 into mem2::: (d mem0, keep mem1, uses mem3, ends 0 offset
 |              |
 |   I/O Work   |
 |______________|
+
+,------------------------------------------------		Gets an integer from a single-char ASCII number input (subtracts 48)
+
+
+++++++++++.----------				Print newline when on 0 (ASCII character 10)
++++++++++++.-----------				Print newline when on -1 (ASCII character 10)
+
 
 Print 'a'
 ++++++++++>++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>---. (d mem0, mem1, uses mem3, ends +2 offset)
