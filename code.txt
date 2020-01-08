@@ -6,6 +6,26 @@ Brackets must still be balanced, though
 ]
 
 
+[INTERPRETER STUFFS]
+Move arbitrary memory location M to register N (start & end at register)
+[- nav(M,N) + nav(N,M)]
+Copy M to INPUT1 (-4) through COPYBUFFER (start & end at register)
+[- nav(M,-1) + nav(-1, -4) + nav(-4, M) ] nav(M,-1) [- nav(-1, M) + nav(M, -1)] nav(-1, M)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [---STRUCTURE---]
 
@@ -136,6 +156,40 @@ ONE TWO OUTPUT BUFFER NEG1
 
 ++>+++++>>>-<<<<			Setup
 >>>[-]<<[->[-]<<-[>>[-]+>]+[->+]-<<-[<[-]>[+]+>]+[->+]-<<+<]>-<<[-]		Execution
+
+
+
+
+
+[PSEUDO-RANDOM NUMBER GENERATION]
+[n+1 = (17n + 1) % 256]
+ONE TWO OUTPUT BUFFER NEG1
+Start at ONE with seed/last value
+
+>+++++++++++++++++<					Make TWO 17
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>		Multiply ONE and TWO and store in OUTPUT and move there
++									Add one (modulo 256 happens automagically)
+
+>+++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+
+ALSO
+[-<<+>>]<<				Copy back into ONE and move there
+
+>+++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+[-<<+>>]<<
+
+BETTER RANDOM
+>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++< 	Make TWO 65
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>		Multiply ONE and TWO and store in OUTPUT and move there
++									Add one (modulo 256 happens automagically)
+[-<<+>>]<<										Copy back into ONE and move there
+
+>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+[-<<+>>]<<d
+
+
+
+
+
+
+
 
 
 

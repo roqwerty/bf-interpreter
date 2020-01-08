@@ -3,7 +3,7 @@
 # INPUT1 INPUT2 OUTPUT1 SCRATCH/OUTPUT2/COPYBUFFER NEG1MARK STORAGE1 STORAGE2 ..
 # SUPPORTED:
 # Current:
-#   #m0 - 5             Comment (nothing happens) (comments entire line, no matter pos)
+#   m0 = 5 #m0 - 5      Comment (nothing happens after #)
 #   del m0              Deletes m0
 #   m0 + 5              Adds 5 to m0
 #   m0 - 5              Subtracts 5 from m0
@@ -14,9 +14,11 @@
 #   m0 * 5              m0 = m0 * 5
 #   m0 * m1             m0 = m0 * m1
 #   pr XXX              Print 'XXX' to the screen (just 'pr' for newline)
+#   prw XXX             Printraw XXX (no newline)
 #   in m0               Takes input into m0
 #   for m0 : m1 + 3     Do operation(s) for each time of m0 (DESTRUCTIVE)
 #   'loop' && '!loop'   Loops everything between forever (Don't put in conditionals!)
+#   raw +[-<+]-         Adds the code '+[-<+]-' raw into the final code (CAREFUL start & end at NEG1)
 #
 #   if m0 = 5: m0 = 10 : m0 + 1     If m0 == 5, do operation m0 = 10 and m0 + 1 (for all if statements)
 #   if m0 = m1: m0 = 10     If m0 == m1, do operation m0 = 10
@@ -26,11 +28,17 @@
 # Future:
 #   !m0             Logical not m0
 #   switch statements?
-#   prw XXX             Printraw XXX (no newline)
+#   other raw logical operations?
+#   lda m0              Loads the value at m0 into register a
+#   ldb m0              Loads the value at m0 into register b
+#   store m1            Stores the value at output into m1
 #
 # EXTRA Features:
 # Function to remove redundant movement '><' or '<>' or '>><<' or '<><>'
 # Function to convert numbers from ASCII to decimal
+#
+# BUGS:
+# Can't print any of the 'operation' characters
 
 # C Ethan Brucker
 # Version 12-4-19
@@ -218,11 +226,23 @@ def translate_line(line):
         return ''
     
     terms = line.split(' ')
+
+    # More blank handling
+    new_terms = []
+    for term in terms:
+        if term != '':
+            new_terms.append(term)
+    terms = new_terms
+    
     # Find significant memory locations
     for term in terms:
         if term[0].lower() == 'm': # Term is memory location
             if term[1:].isdigit():
                 memory.append((int(term[1:]) + 1)) # Stores just the ints in memory
+
+    # Is it raw?
+    if terms[0].lower() == 'raw':
+        output += ' '.join(terms[1:])
 
     # Is it a print?
     if terms[0].lower() == 'pr':
@@ -376,7 +396,7 @@ def translate_line(line):
             continue
         # Is it a comment?
         if term[0] == '#':
-            return '' # End the entire line
+            return output # End the entire line
         # Check to see if the term is an operation
         if term.lower() in ['=', '-', '+', 'del', '*']:
             operation = term.lower()
@@ -513,9 +533,17 @@ def main():
                 print("File {} could not be found.".format(filepath))
     # Variable code now holds the entire instructions
     output = first()
-    for line in code.split('\n'):
+    # Get lines
+    lines = code.split('\n')
+    total_lines = len(lines)
+    completed_lines = 0
+    # Compile lines and print output
+    for line in lines:
         output += translate_line(line)
+        completed_lines += 1
+        print('\rCompiled line {} of {}'.format(completed_lines, total_lines), end='')
     # Clean output
+    print('\nCleaning...')
     output = remove_extra_movement(output)
     # Store output in file
     with open('output.bf', 'w') as file:

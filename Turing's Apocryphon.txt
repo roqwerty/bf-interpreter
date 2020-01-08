@@ -129,7 +129,7 @@ Command				Desc														Rel. End Pos
 
 Multiply mem0 and mem1 into mem2::: (d mem0, keep mem1, uses mem3, ends 0 offset)
 [>[->+>+<<]>>[-<<+>>]<<<-]
-[>[->+>+<<]>>[-<<+>>]<<<-]>[-] (d mem1, ends 1 offset)
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]< (d mem1, ends 0 offset)
 
 	[				For each time of mem0
 		>				Move to mem1
@@ -139,6 +139,10 @@ Multiply mem0 and mem1 into mem2::: (d mem0, keep mem1, uses mem3, ends 0 offset
 		<<<				Move from mem3 to mem0
 	-]				End of for loop
 
+
+Pseudorandom number from seed in mem0 (d mem0, mem1, ends mem2 with output)
+>+++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+ ((17n+1) mod 256)
+>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+ ((65n+1) mod 256)
 
  ______________
 |              |

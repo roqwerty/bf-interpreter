@@ -1,0 +1,115 @@
+[
+Sets up the program in the following format:
+INPUT1 INPUT2 OUTPUT1 SCRATCH/OUTPUT2/COPYBUFFER NEG1MARK STORAGE1 STORAGE2 ....
+]
+[ CODE EXAMPLE ONE
+>>>>->													Sets up NEG1MARK and navigates to STORAGE1
++++++>+++++++<											Stores 5 and 7 (STORAGE1 and STORAGE2)
+[-+[-<+]-<+<<<++[->+]->]+[-<+]-<[-+[->+]->++[-<+]-<]	Copies STORAGE1 into INPUT1
++[->+]->>												Navigate to STORAGE2
+[-+[-<+]-<+<<++[->+]->>]+[-<+]-<[-+[->+]->>++[-<+]-<]	Copies STORAGE2 into INPUT2
+<<<														Naviagte to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]							Multiply into OUTPUT1 and nav to INPUT2
+>[-+[->+]->>>++[-<+]-<<]								Move multiplied value to STORAGE3
++[->+]->>>												Navigate to STORAGE3
+.														Print ASCII value to screen
+]
+
+[EXAMPLE Multiply two inputted characters CODE EXAMPLE TWO
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII
+[>+<-]													Move register right
+,------------------------------------------------		Get another input and reduce by 48
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]							Multiply MEM0 and MEM1 into MEM2 end @ MEM1
+>														Move to MEM2
+.														Print ASCII
+]
+
+[FUTURE print a character a certain number of times]
+
+
+[
+EXAMPLE Enter the three digit number of an ASCII character to print NO VALIDITY CHECKS (Stores in STORAGE1)
+>>>>-<<<<												Sets up NEG1MARK and returns to INPUT1
+++++++++++>++++++++++<									Makes 10 and 10
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Makes 100 in MEM2/OUTPUT1 (Ten times ten)
+[-+[->+]->++[-<+]-<<]									Moves 100 from OUTPUT1 to STORAGE1
++[->+]->>+++++++++++[-<+]-<<<<							Stores 10 in STORAGE2 and move to INPUT1
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (hundreds digit)
++[->+]->												Move to STORAGE1
+[-+[-<+]-<<<++[->+]->]									Move the 100 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT ONE COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (tens digit)
++[->+]->>												Move to STORAGE2
+[-+[-<+]-<<<++[->+]->>]									Move the 10 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT TWO COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (ones digit)
+[-+[->+]->++[-<+]-<<<<]									Move additively into STORAGE1
++[->+]->.												Move to STORAGE1 and print
+]
+
+[
+EXAMPLE Input 3 digits and then a number which is num of times to print up to 9
+>>>>-<<<<												Sets up NEG1MARK and returns to INPUT1
+++++++++++>++++++++++<									Makes 10 and 10
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Makes 100 in MEM2/OUTPUT1 (Ten times ten)
+[-+[->+]->++[-<+]-<<]									Moves 100 from OUTPUT1 to STORAGE1
++[->+]->>+++++++++++[-<+]-<<<<							Stores 10 in STORAGE2 and move to INPUT1
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (hundreds digit)
++[->+]->												Move to STORAGE1
+[-+[-<+]-<<<++[->+]->]									Move the 100 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT ONE COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (tens digit)
++[->+]->>												Move to STORAGE2
+[-+[-<+]-<<<++[->+]->>]									Move the 10 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT TWO COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (ones digit)
+[-+[->+]->++[-<+]-<<<<]									Move additively into STORAGE1
++[->+]->>												Move to STORAGE2
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (num times)
+[-<.>]													Print once for each number entered
+++++++++++.----------									Print newline (ASCII code 10)
+]
+
+
+EXAMPLE three digit seed for pseudorandom numbers
+ONE TWO OUTPUT BUFFER NEG1 M1
+>>>>-<<<<												Sets up NEG1MARK and returns to INPUT1
+++++++++++>++++++++++<									Makes 10 and 10
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Makes 100 in MEM2/OUTPUT1 (Ten times ten)
+[-+[->+]->++[-<+]-<<]									Moves 100 from OUTPUT1 to STORAGE1
++[->+]->>+++++++++++[-<+]-<<<<							Stores 10 in STORAGE2 and move to INPUT1
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (hundreds digit)
++[->+]->												Move to STORAGE1
+[-+[-<+]-<<<++[->+]->]									Move the 100 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT ONE COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (tens digit)
++[->+]->>												Move to STORAGE2
+[-+[-<+]-<<<++[->+]->>]									Move the 10 to INPUT2
++[-<+]-<<<<												Move to INPUT1
+[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>							Multiply destructively into output and move there
+[-+[->+]->++[-<+]-<<]									Move additively into STORAGE1
+<<														Move back to INPUT1				DIGIT TWO COMPLETE
+,------------------------------------------------		Get numerical input and reduce by 48 to make integer right from ASCII (ones digit)
+[-+[->+]->++[-<+]-<<<<]									Move additively into STORAGE1
++[->+]->												Move to STORAGE1
+[-<<+<<<+>>>>>]<<[->>+<<]<<<							Copy STORAGE1 into ONE and move there
+>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<[>[->+>+<<]>>[-<<+>>]<<<-]>[-]>+		Perform 65v pseudorandom generation (65n plus 1 mod 256)
+>>>>[-]<<<<[->>>>+<<<<]+[->+]-							Move result to M2 and end at NEG1
+
+
+

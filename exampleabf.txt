@@ -1,0 +1,127 @@
+EXAMPLE ABF PROGRAMS
+
+# Start loop
+loop
+# Get input
+in m0
+m0 - 48
+# Converts to number 0-9
+if m0 = 1: pr ONE
+if m0 = 2: pr TWO
+if m0 = 3: pr THREE
+if m0 = 4: pr FOUR
+# End the loop
+!loop
+
+---------------------------------------------
+
+# Get input
+in m0
+m0 - 48
+# Converts to number 0-9
+for m0: pr This is : pr a time! : pr
+
+---------------------------------------------
+
+# Location
+m0 = 1
+
+loop
+
+# Get new room number
+prw >>>
+in m1
+pr
+m1 - 48
+
+# Move to room
+if m1 = 1: m0 = 1
+if m1 = 2: m0 = 2
+if m1 = 3: m0 = 3
+if m1 = 4: m0 = 4
+if m1 = 5: m0 = 5
+if m1 = 6: m0 = 6
+if m1 = 7: m0 = 7
+if m1 = 8: m0 = 8
+if m1 = 9: m0 = 9
+
+# Error
+if m1 > 9: pr That's not a valid room number.
+
+# Room descriptions
+if m0 = 1: pr You have entered room one. : pr The ground is sticky... : pr
+if m0 = 2: pr This appears to be room two! : pr
+if m0 = 3: pr You have stepped into room three... : pr
+if m0 = 4: pr Four : pr
+if m0 = 5: pr Five : pr
+if m0 = 6: pr Six : pr
+if m0 = 7: pr Seven : pr
+if m0 = 8: pr Eight.... : pr
+if m0 = 9: pr Another! (Room nine) : pr
+
+!loop
+
+---------------------------------------------
+
+# m0 = location
+# m1 = input
+# m2 = room link N (link to itself for no link)
+# m3 = room link E
+# m4 = room link S
+# m5 = room link W
+
+m0 = 1 # Starting location
+
+# Map:
+# 1 - 2
+# |
+# 3 - 4
+
+loop # Main game loop
+
+# Print current room desc and create pathing (N, E, S, W)
+if m0 = 1 : pr Room One : pr   : m2 = 1 : m3 = 2 : m4 = 3 : m5 = 1
+if m0 = 2 : pr Room Two : pr   : m2 = 2 : m3 = 2 : m4 = 2 : m5 = 1
+if m0 = 3 : pr Room Three : pr : m2 = 1 : m3 = 4 : m4 = 3 : m5 = 3
+if m0 = 4 : pr Room Four : pr  : m2 = 4 : m3 = 4 : m4 = 4 : m5 = 3
+
+# Get input (n, e, s, w) = (14, 5, 19, 23)
+# (m) = (13)
+prw >>>_
+in m1
+m1 - 96 # a=1, b=2, etc.
+pr
+
+# Process movement (N, E, S, W)
+if m1 = 14: m0 = m2
+if m1 = 5: m0 = m3
+if m1 = 19: m0 = m4
+if m1 = 23: m0 = m5
+# Other commands
+# Map
+if m1 = 13: pr : pr 1___2 : pr | : pr 3___4 : pr
+
+!loop # End of loop
+
+---------------------------------------------
+
+# m0 = important number 1
+# m1 = important number 2
+# m3 = logic buffer
+
+m0 = 5
+m1 = 4
+
+if m0 > 4 : m3 + 1
+if m1 < 5 : m3 + 1
+
+if m3 = 2 : pr Both are True!
+if m3 = 1 : pr One is True!
+if m3 = 0 : pr Neither is True!
+
+m3 = 0
+
+---------------------------------------------
+---------------------------------------------
+---------------------------------------------
+---------------------------------------------

@@ -1,0 +1,164 @@
+# m0 = location
+# m1 = input
+# m2 = room link N (link to itself for no link)
+# m3 = room link E
+# m4 = room link S
+# m5 = room link W
+# m6 = logic buffer boolean incrementor
+
+# m10 = location of item 1 (10 is inventory)
+# m11 = location of item 2
+# m12 = location of item 3
+# m13 = location of item 4
+# m14 = location of item 5
+# m15 = location of item 6
+# m16 = location of item 7
+# m17 = location of item 8
+# m18 = location of item 9
+# m19 = location of item 10
+
+# Ideal commands:
+# n, s, e, w: Go north/south/east/west
+# u: Opens use menu and index a-z of item to use (from room) (0 is cancel)
+# i: Opens inventory and index a-z of item to use (from inv) (0 is cancel)
+# h: Displays a help menu of all commands
+
+# Map:
+
+# 1
+# | 3-2
+# 0---'
+# |
+# 4-5
+#   |
+#	6-8
+#	| |
+#	7 9
+
+
+m0 = 0 # Starting location
+# Newline for sanity
+pr
+
+# Starting location of items
+m10 = 7 # Jade Statue
+m11 = 1 # Fishing Rod
+m12 = 3 # Lantern
+m13 = 8 # Rusted Key
+
+loop # Main game loop
+
+# Print current room desc and create pathing (N=m2, E=m3, S=m4, W=m5)
+# Front of house (0)
+if m0 = 0: pr You are standing in an open field west of a white house, with a boarded front door. : pr You can see a small lake to the north. : pr (A secret path leads south into the forest.) : pr There is a Small Mailbox. : m2 = 1 : m3 = 2 : m4 = 4 : m5 = 0
+# Lake Edge (1)
+if m0 = 1: pr You find yourself at the edge of a beautiful lake aside rolling hills. : pr A small pier juts out into the lake. : pr (You can see a white house in the distance to the south.) : m2 = 1 : m3 = 1 : m4 = 0 : m5 = 1
+# Back of house (2)
+if m0 = 2: pr You are standing behind the white house. : pr You could probably get back to the front by going south. : pr A window to the west looks... unsecured... : m2 = 2 : m3 = 2 : m4 = 0 : m5 = 3
+# Kitchen (3)
+if m0 = 3: pr You find yourself in a dimly lit kitchen with dust covering the floor. : pr The window you entered by lies to the east. : m2 = 3 : m3 = 2 : m4 = 3 : m5 = 3
+# Forest (4)
+if m0 = 4: pr This is a forest, with trees in all directions. To the east, there appears to be sunlight. : m2 = 0 : m3 = 5 : m4 = 4 : m5 = 4
+# Clearing (5)
+if m0 = 5: pr You are in a clearing, with a forest surrounding you on all sides. A path leads south. : m2 = 5 : m3 = 5 : m4 = 6: m5 = 4
+# Cave Entrance (6)
+if m0 = 6: pr You are in a tiny cave with a dark, forbidding staircase leading south. : pr The cave system appears to extend to the east. : m2 = 5 : m3 = 8 : m4 = 7 : m5 = 6
+# Mud-Floored Room (7)
+if m0 = 7: pr You have entered a mud-floored room. : pr The staircase you descended lies to the north. : m2 = 6 : m3 = 7 : m4 = 7 : m5 = 7
+# Maze Entrance (8)
+if m0 = 8: pr You stand before a majestic set of golden doors easily 15 feet high. : pr Through them, you can see a short distance into a branching corridor to the south. : pr The rest of the cave lies to the west. : m2 = 8 : m3 = 8 : m4 = 9 : m5 = 6
+# Maze Interior (9)
+if m0 = 9: pr You stand in the middle of a large number of branching corridors, stretching out into darkness. : pr You could probably find your way back to the entrance by going roughly north. : m2 = 8 : m3 = 9 : m4 = 9 : m5 = 9
+
+# Print if items are in rooms
+# Jade Statue
+if m0 = m10: pr A small jade statue lies in the corner. It fogs your mind, almost as if it doesn't want to be noticed.
+# Fishing Rod
+if m0 = m11: pr A fishing rod lies discarded on the ground. It appears to be in passable condition.
+# Lanterm
+if m0 = m12: pr A lantern glows dimly nearby.
+# Rusted Key
+if m0 = m13: pr You spot a small, rusted key on the ground.
+
+# Get input (n, e, s, w) = (14, 5, 19, 23)
+# (m) = (13)
+pr
+prw >>>_
+in m1
+m1 - 96 # a=1, b=2, etc.
+pr
+
+# Process movement (N, E, S, W)
+if m1 = 14: m0 = m2
+if m1 = 5: m0 = m3
+if m1 = 19: m0 = m4
+if m1 = 23: m0 = m5
+# Other commands
+# help
+if m1 = 8: pr : pr ---List of commands--- : pr (n, s, e, w)> Go north/south/east/west : pr h> Displays this help text : pr u> Opens use menu for items in room : pr i> Opens use menu for items in inventory : pr
+
+# Use from room (m6 is logic buffer)
+# Print available items
+if m1 = 21: m6 + 1 : pr 0> Cancel
+# If items in room, list as options
+if m0 = m10: m6 + 1
+if m6 = 2 : pr a> Jade Statue : m6 - 1
+if m0 = m11: m6 + 1
+if m6 = 2 : pr b> Fishing Rod : m6 - 1
+if m0 = m12: m6 + 1
+if m6 = 2 : pr c> Lantern : m6 - 1
+if m0 = m13: m6 + 1
+if m6 = 2 : pr d> Rusted Key : m6 - 1
+m6 = 0 # Necessary?
+# Get new input and set logic buffer to true to indicate nested commands (only happens if initial input was u)
+if m1 = 21: m6 = 1 : prw >_ : in m1 : m1 - 96
+# If item in room and selected, pick up
+if m1 = 1: m6 + 1
+if m0 = m10: m6 + 1
+if m6 = 3: pr : pr You pick up the Jade Statue. : m10 = 10
+if m6 > 1: m6 = 1
+
+if m1 = 2: m6 + 1
+if m0 = m11: m6 + 1
+if m6 = 3: pr : pr You pick up the fishing rod. : m11 = 10
+if m6 > 1: m6 = 1
+
+if m1 = 3: m6 + 1
+if m0 = m12: m6 + 1
+if m6 = 3: pr : pr You pick up the lantern. : m12 = 10
+if m6 > 1: m6 = 1
+
+if m1 = 4: m6 + 1
+if m0 = m13: m6 + 1
+if m6 = 3: pr : pr You pick up the rusted key. : m13 = 10
+if m6 > 1: m6 = 1
+
+if m6 = 1: pr : m1 = 0
+m6 = 0
+# End of u command
+
+
+# Use from inventory
+
+# Print available items
+if m1 = 9: m6 = 1 : pr 0> Cancel
+# Print items in inventory
+if m10 = 10: m6 + 1
+if m6 = 2: pr a> Jade Statue
+if m10 = 10: m6 - 1
+
+if m11 = 10: m6 + 1
+if m6 = 2: pr b> Fishing Rod
+if m11 = 10: m6 - 1
+
+if m12 = 10: m6 + 1
+if m6 = 2: pr c> Lantern
+if m12 = 10: m6 - 1
+
+if m13 = 10: m6 + 1
+if m6 = 2: pr d> Rusted Key
+if m13 = 10: m6 - 1
+
+m6 = 0
+
+!loop # End of loop
