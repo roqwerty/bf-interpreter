@@ -302,7 +302,12 @@ def translate_line(line):
         condition = group[0]
         commands = []
         for command in group[1:]:
-            commands.append(command.strip())
+            strippedCommand = command.strip()
+            if strippedCommand.split(' ')[0] == 'if': # If there is a nested if statement
+                print("ERRROR: NESTED IF STATEMENTS NOT SUPPORTED. Ignoring conditional...")
+            else:
+                commands.append(strippedCommand) # Add the command to the list of commands to be executed
+
 
         # Nav home
         output += nav(pos, 0)
